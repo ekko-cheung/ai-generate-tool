@@ -1,0 +1,20 @@
+{
+  "name": "ai-generate-tool",
+  "version": "0.1.0",
+  "description": "AI generators powered by DeepSeek: git commit messages and GitHub issues",
+  "type": "module",
+  "bin": {
+    "agt": "bin/agt.js"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "^8.7.5"
+  },
+  "packageManager": "pnpm@12.4.1",
+  "license": "MIT"
+}
