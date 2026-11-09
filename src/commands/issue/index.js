@@ -1,5 +1,5 @@
 import { parseArgs } from 'node:util';
-import { input, select } from '@inquirer/prompts';
+import { input, select, search } from '@inquirer/prompts';
 import { listRepos, listLabels, createIssue } from './gh.js';
 import { generateIssue } from './generate.js';
 import { getApiKey, missingKeyHelp } from '../../config.js';
@@ -48,13 +48,18 @@ export async function run(argv) {
   if (!repo) {
     const repos = await listRepos();
     if (!repos.length) throw new Error('gh repo list 没有返回任何仓库,请用 --repo 指定');
-    repo = await select({
-      message: '选择仓库:',
+    const choices = repos.map((r) => ({
+      name: r.description ? `${r.nameWithOwner} — ${r.description}` : r.nameWithOwner,
+      value: r.nameWithOwner,
+    }));
+    repo = await search({
+      message: '选择仓库(输入以过滤):',
       pageSize: 15,
-      choices: repos.map((r) => ({
-        name: r.description ? `${r.nameWithOwner} — ${r.description}` : r.nameWithOwner,
-        value: r.nameWithOwner,
-      })),
+      source: (term) => {
+        const q = (term ?? '').trim().toLowerCase();
+        if (!q) return choices;
+        return choices.filter((c) => c.name.toLowerCase().includes(q));
+      },
     });
   }
 
